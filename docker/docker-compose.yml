@@ -25,5 +25,18 @@ services:
     networks:
       - soc-net
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    ports:
+      - "5044:5044"   # Filebeat
+      - "5000:5000/udp"  # logs UDP (Suricata)
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+    networks:
+      - soc-net
+
 networks:
   soc-net:
