@@ -32,7 +32,7 @@ services:
       - "5044:5044"   # Filebeat
       - "5000:5000/udp"  # logs UDP (Suricata)
     volumes:
-      - ./configs/logstash/pipeline:/usr/share/logstash/pipeline
+      - ../configs/logstash/pipeline:/usr/share/logstash/pipeline
     depends_on:
       - elasticsearch
     networks:
