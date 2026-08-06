@@ -1,0 +1,6 @@
+# Elasticsearch data
+esdata/
+**/esdata/
+
+# Docker volumes 
+volumes/
