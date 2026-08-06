@@ -1,42 +1,60 @@
-version: '3.8'
-
 services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: elasticsearch
+    restart: unless-stopped
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"   
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - soc-net
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
     container_name: kibana
+    restart: unless-stopped
     ports:
       - "5601:5601"
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - soc-net
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.12.0
     container_name: logstash
+    restart: unless-stopped
     ports:
-      - "5044:5044"   # Filebeat
-      - "5000:5000/udp"  # logs UDP (Suricata)
+      - "5044:5044"       # Filebeat
+      - "5000:5000/udp"   # Suricata (via pfSense, syslog/JSON)
     volumes:
-      - ../configs/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./ingestion/logstash/pipelines:/usr/share/logstash/pipeline:ro
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - soc-net
+
+volumes:
+  esdata:
 
 networks:
   soc-net:
