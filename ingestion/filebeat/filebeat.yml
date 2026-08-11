@@ -1,0 +1,31 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/auth.log
+    fields:
+      log_source: dmz-auth
+    fields_under_root: true
+    tags: ["ssh", "auth"]
+
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/syslog
+    fields:
+      log_source: dmz-syslog
+    fields_under_root: true
+    tags: ["syslog"]
+
+output.logstash:
+  hosts: ["192.168.30.10:5044"]
+
+setup.template.enabled: false
+setup.ilm.enabled: false
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat.log
+  keepfiles: 7

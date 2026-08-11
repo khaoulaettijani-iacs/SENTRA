@@ -1,15 +1,17 @@
-# Interfaces Assignment — pfSense (SENTRA)
+# Assignation des Interfaces pfSense
 
 Ce document décrit la correspondance entre les interfaces physiques/virtuelles VMware, les noms dans pfSense, leurs adresses IP et leur rôle dans l’architecture.
 
 ## Table de mapping
 
-| Interface physique (VMware) | Nom pfSense | Adresse IP        | Rôle |
-|----------------------------|-------------|-------------------|------|
-| VMnet8 (NAT)               | WAN         | DHCP (192.168.150.x) | Accès Internet (sortie uniquement) |
-| VMnet2                     | ATTACKER        | 192.168.10.1/24   | Réseau Attaquant (Kali Linux) |
-| VMnet3                     | DMZ       | 192.168.20.1/24   | DMZ (Ubuntu Server - cible) |
-| VMnet4                     | SOC (LAN)  | 192.168.30.1/24   | SOC / SENTRA (ELK, Suricata, monitoring) |
+# Assignation des Interfaces pfSense
+
+| Nom Physique (pfSense) | Nom Logique | Adresse IP statique | Rôle & Zone |
+| :--- | :--- | :--- | :--- |
+| `em0` | WAN | DHCP (Client) | Uplink Internet (NAT) |
+| `em1` | OPT1 | `192.168.10.1/24` | Passerelle Zone Attaquant (Kali) |
+| `em2` | OPT2 | `192.168.20.1/24` | Passerelle Zone DMZ |
+| `em3` | LAN | `192.168.30.1/24` | Passerelle Zone SOC |
 
 ---
 
@@ -35,25 +37,3 @@ Ce document décrit la correspondance entre les interfaces physiques/virtuelles 
   - Subnet : `192.168.150.0/24` (NAT VMware)
   - Rôle : accès Internet pour mises à jour, API externes
 
----
-
-## Notes : 
-
-- pfSense agit comme **pare-feu central** entre tous les segments.
-- Chaque interface est **isolée par défaut** (deny all).
-- Les règles firewall sont appliquées **par interface **.
-- Le trafic est autorisé uniquement selon les règles définies :
-  - Kali → DMZ : autorisé
-  - Kali → SOC : bloqué
-  - DMZ → SOC : autorisé (logs uniquement)
-  - SOC → Internet : autorisé
-
----
-
-## Objectif sécurité
-
-Cette segmentation permet de simuler une architecture réaliste :
-
-- Isolation stricte entre attaquant, DMZ et SOC
-- Surveillance via Suricata (WAN + DMZ)
-- Collecte centralisée des logs (pipeline SENTRA)

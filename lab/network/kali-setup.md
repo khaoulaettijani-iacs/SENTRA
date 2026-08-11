@@ -2,17 +2,15 @@
 
 Ce document décrit la configuration réseau appliquée à la machine Kali Linux dans le lab SENTRA, ainsi que les tests de connectivité réalisés.
 
----
+# Configuration Réseau : Kali Linux (Attaquant)
 
-## Configuration réseau
+**Prérequis :** L'adaptateur réseau VMware doit être fixé sur `VMnet2`.
 
-- **Interface réseau VMware** : VMnet2 (Host-Only)
-- **Nom interface Kali** : eth0
-- **Adresse IP statique** : 192.168.10.10/24
-- **Passerelle (Gateway)** : 192.168.10.1 (pfSense - ATTACKER)
-- **DNS** : 8.8.8.8
-
----
+**Configuration IP :**
+* IP : `192.168.10.10`
+* Masque : `255.255.255.0 (/24)`
+* Passerelle : `192.168.10.1`
+* DNS : `8.8.8.8` (via NAT pfSense)
 
 ## Configuration appliquée
 
@@ -77,8 +75,7 @@ Tests web (Nikto / ZAP)
 
 ## Rôle dans l’architecture
 
-Kali Linux joue le rôle de Machine attaquante (Attacker Node). 
-Elle est utilisée pour générer du trafic malveillant afin de :
+Kali Linux joue le rôle de Machine attaquante (Attacker Node). Elle est utilisée pour générer du trafic malveillant afin de :
 - tester la détection par Suricata
 - générer des logs (Filebeat → ELK)
 - alimenter le moteur de corrélation SENTRA
