@@ -1,5 +1,6 @@
 filebeat.inputs:
-  - type: log
+  - type: filestream
+    id: dmz-auth-stream
     enabled: true
     paths:
       - /var/log/auth.log
@@ -8,7 +9,8 @@ filebeat.inputs:
     fields_under_root: true
     tags: ["ssh", "auth"]
 
-  - type: log
+  - type: filestream
+    id: dmz-syslog-stream
     enabled: true
     paths:
       - /var/log/syslog

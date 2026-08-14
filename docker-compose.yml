@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
     ports:
       - "5044:5044"       # Filebeat
-      - "5000:5000/udp"   # Suricata (via pfSense, syslog/JSON)
+      - "5000:5000"   # Suricata (via pfSense, TCP via syslog-ng)
     volumes:
       - ./ingestion/logstash/pipelines:/usr/share/logstash/pipeline:ro
     depends_on:
