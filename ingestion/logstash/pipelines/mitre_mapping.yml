@@ -1,0 +1,11 @@
+# Mapping MITRE ATT&CK pour les alertes SENTRA
+# Format: "SID": '{"tactic": "Nom", "tactic_id": "ID", "technique": "Nom", "technique_id": "ID"}'
+
+# --- Règles Custom SENTRA ---
+"9000001": '{"tactic": "Reconnaissance", "tactic_id": "TA0043", "technique": "Active Scanning", "technique_id": "T1595"}'
+"9000002": '{"tactic": "Credential Access", "tactic_id": "TA0006", "technique": "Brute Force", "technique_id": "T1110.001"}'
+"9000003": '{"tactic": "Reconnaissance", "tactic_id": "TA0043", "technique": "Wordlist Scanning", "technique_id": "T1595.003"}'
+
+# --- Règles ET Open / Suricata Built-in (basé sur tes tests) ---
+"2024364": '{"tactic": "Reconnaissance", "tactic_id": "TA0043", "technique": "Vulnerability Scanning", "technique_id": "T1595.002"}' # ET SCAN Nmap User-Agent
+"2001219": '{"tactic": "Credential Access", "tactic_id": "TA0006", "technique": "Brute Force", "technique_id": "T1110.001"}' # ET SCAN Potential SSH Brute-Force
