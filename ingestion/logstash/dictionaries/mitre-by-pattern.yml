@@ -1,0 +1,4 @@
+# clé = regex appliqué sur alert.signature (les libellés ET Open)
+"(?i)nmap": "Reconnaissance|T1595.002|Active Scanning: Vulnerability Scanning"
+"(?i)ssh.*(scan|brute)": "Credential Access|T1110.001|Brute Force: Password Guessing"
+"(?i)nikto|web[_ ]?scan|web_server": "Reconnaissance|T1595.002|Active Scanning: Vulnerability Scanning"

@@ -1,0 +1,6 @@
+# clé = alert.signature_id (SID Suricata), valeur = "tactic|technique_id|technique_name"
+"9000001": "Reconnaissance|T1595.002|Active Scanning: Vulnerability Scanning"
+"9000002": "Credential Access|T1110.001|Brute Force: Password Guessing"
+"9000003": "Reconnaissance|T1595.003|Active Scanning: Wordlist Scanning"
+"9000004": "Reconnaissance|T1595.002|Active Scanning: Vulnerability Scanning"
+"9000005": "Reconnaissance|T1595.002|Active Scanning: Vulnerability Scanning"
