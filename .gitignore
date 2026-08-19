@@ -4,3 +4,7 @@ esdata/
 
 # Docker volumes 
 volumes/
+
+# Ignorer les gros datasets CSV mais garder l'architecture des dossiers
+ml/data/raw/*.csv
+ml/models/*.pkl
