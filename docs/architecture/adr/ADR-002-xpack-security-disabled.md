@@ -1,5 +1,5 @@
 
-# ADR-006— Désactivation de X-Pack Security (ELK)
+# ADR-002— Désactivation de X-Pack Security (ELK)
 
 ## Contexte
 
