@@ -53,6 +53,17 @@ services:
         condition: service_healthy
     networks:
       - soc-net
+  backend-api:
+    build: 
+      context: ./backend-api
+    container_name: sentra-ml-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml/models:/models:ro
+    networks:
+      - soc-net
 
 volumes:
   esdata:
