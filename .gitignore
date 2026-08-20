@@ -8,5 +8,11 @@ volumes/
 # Ignorer les gros datasets CSV mais garder l'architecture des dossiers
 ml/data/raw/*.csv
 ml/models/*.pkl
+ml/models/*.json
+
+# MAIS forcer l'inclusion des modèles v2 pour la production SOC (Whitelist)
+!ml/models/*_v2_lean.pkl
+!ml/models/scaler_v2.pkl
+!ml/models/feature_columns_v2.json
 
 venv/
