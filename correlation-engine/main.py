@@ -124,4 +124,5 @@ while True:
     except Exception as e:
         print(f"[-] Erreur boucle : {e}")
         
+        
     time.sleep(10)
