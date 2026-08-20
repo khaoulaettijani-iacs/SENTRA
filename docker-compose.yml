@@ -65,6 +65,16 @@ services:
     networks:
       - soc-net
 
+  risk-scoring-engine:
+    build: 
+      context: ./risk-scoring-engine
+    container_name: sentra-risk-engine
+    restart: unless-stopped
+    ports:
+      - "8001:8000"  # Expose le port 8000 du conteneur sur le port 8001 de l'hôte
+    networks:
+      - soc-net
+
 volumes:
   esdata:
 
