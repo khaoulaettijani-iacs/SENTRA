@@ -6,9 +6,9 @@ import pandas as pd
 app = FastAPI(title="SENTRA ML API", description="API servant les modèles de détection d'intrusions")
 
 # Chargement des modèles depuis le volume monté
-rf = joblib.load("/models/random_forest_v2_lean.pkl")
-iso = joblib.load("/models/isolation_forest_v2_lean.pkl")
-scaler = joblib.load("/models/scaler_v2.pkl")
+rf = joblib.load("models/random_forest_v2_lean.pkl")
+iso = joblib.load("models/isolation_forest_v2_lean.pkl")
+scaler = joblib.load("models/scaler_v2.pkl")
 
 # Features d'entraînement v2
 FEATURES = [
