@@ -1,1 +1,5 @@
-fastapi uvicorn jinja2 elasticsearch reportlab
+fastapi 
+uvicorn 
+jinja2 
+elasticsearch 
+reportlab
