@@ -88,6 +88,17 @@ services:
     restart: unless-stopped
     networks:
       - soc-net
+  reporting-engine:
+    build: ./reporting
+    container_name: reporting-engine
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+    volumes:
+      - ./reporting/output:/app/output
+    ports:
+      - "8003:8000"
+    networks:
+      - soc-net
 
 volumes:
   esdata:

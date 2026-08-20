@@ -1,0 +1,43 @@
+=================================================================
+RAPPORT D'INCIDENT DE SÉCURITÉ — SENTRA
+=================================================================
+Généré le : {{ generated_at }}
+Référence  : {{ incident_id }}
+
+RÉSUMÉ EXÉCUTIF
+-----------------------------------------------------------------
+Le {{ timestamp }}, une activité classée {{ risk_level }} (score {{ risk_score }}/100)
+a été détectée depuis {{ src_ip }} vers {{ dest_ip }}.
+L'alerte "{{ signature }}" a été associée à la technique MITRE ATT&CK
+{{ mitre_technique_id }} ({{ mitre_technique_name }}), tactique {{ mitre_tactic }}.
+
+DÉTAILS TECHNIQUES
+-----------------------------------------------------------------
+Horodatage              : {{ timestamp }}
+IP source                : {{ src_ip }}
+IP destination            : {{ dest_ip }}
+Signature IDS             : {{ signature }}
+Sévérité IDS (Suricata)   : {{ ids_severity }}
+Tactique MITRE             : {{ mitre_tactic }}
+Technique MITRE            : {{ mitre_technique_id }} — {{ mitre_technique_name }}
+Probabilité Random Forest : {{ rf_proba | round(3) }}
+Score Isolation Forest    : {{ iso_raw_score | round(3) }}
+Score de risque final     : {{ risk_score }}/100 ({{ risk_level }})
+
+DÉCOMPOSITION DU SCORE
+-----------------------------------------------------------------
+Composante IDS    : {{ breakdown.ids | round(1) }} / 35
+Composante MITRE  : {{ breakdown.mitre | round(1) }} / 15
+Composante RF      : {{ breakdown.rf | round(1) }} / 30
+Composante IF      : {{ breakdown.iso | round(1) }} / 20
+
+RECOMMANDATIONS
+-----------------------------------------------------------------
+{% for rec in recommendations %}
+- {{ rec }}
+{% endfor %}
+
+-----------------------------------------------------------------
+Rapport généré automatiquement par le moteur de reporting SENTRA.
+Ce document constitue une pièce de l'evidence pack du projet.
+=================================================================
