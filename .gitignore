@@ -16,3 +16,4 @@ ml/models/*.json
 !ml/models/feature_columns_v2.json
 
 venv/
+.env
