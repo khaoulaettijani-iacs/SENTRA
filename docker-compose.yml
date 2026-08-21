@@ -116,6 +116,18 @@ services:
       retries: 5
     networks: 
       - soc-net
+  case-management-api:
+    build: ./case-management-api
+    container_name: case-management-api
+    environment:
+      - DATABASE_URL=postgresql://sentra_app:${POSTGRES_PASSWORD}@postgres:5432/sentra
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports: 
+      - "8004:8000"
+    networks: 
+      - soc-net
 volumes:
   esdata:
   pgdata:
