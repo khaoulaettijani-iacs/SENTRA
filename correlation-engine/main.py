@@ -6,9 +6,11 @@ from elasticsearch import Elasticsearch
 ES_HOST = os.environ.get("ES_HOST", "http://elasticsearch:9200")
 ML_API = os.environ.get("ML_API", "http://backend-api:8000")
 RISK_API = os.environ.get("RISK_API", "http://risk-scoring-engine:8000")
+# Ajout de l'URL vers ton API Case Management
+CASE_API_URL = os.environ.get("CASE_API_URL", "http://case-management-api:8000/incidents")
 
 print(f"[*] Démarrage du Correlation Engine SENTRA...")
-print(f"[*] ES_HOST: {ES_HOST} | ML_API: {ML_API} | RISK_API: {RISK_API}")
+print(f"[*] ES_HOST: {ES_HOST} | ML_API: {ML_API} | RISK_API: {RISK_API} | CASE_API: {CASE_API_URL}")
 
 ES = Elasticsearch(ES_HOST)
 
@@ -25,7 +27,6 @@ def find_flow(flow_id):
 def extract_features(document):
     """Extrait les 8 features ML, qu'elles viennent d'un log 'flow' ou du snapshot d'une 'alert'"""
     flow = document.get("flow", {})
-    # Si 'age' n'est pas encore calculé par Suricata, on assume 1 seconde
     age = max(float(flow.get("age", 1.0)), 1.0)
     bts = float(flow.get("bytes_toserver", 0))
     btc = float(flow.get("bytes_toclient", 0))
@@ -87,11 +88,11 @@ while True:
             # 2. Si le flux final n'est pas encore prêt, on utilise l'instantané de l'alerte !
             if not target_data:
                 if "flow" in alert:
-                    print("     [i] Utilisation du snapshot réseau en temps réel.")
+                    print("    [i] Utilisation du snapshot réseau en temps réel.")
                     target_data = alert
                 else:
-                    print("     [!] Aucun contexte réseau. Alerte ignorée.")
-                    last_ts = alert["@timestamp"] # FIX CRITIQUE : on avance le temps quoi qu'il arrive
+                    print("    [!] Aucun contexte réseau. Alerte ignorée.")
+                    last_ts = alert["@timestamp"]
                     continue 
 
             # 3. Interroger les APIs
@@ -106,7 +107,7 @@ while True:
             }
             risk_result = requests.post(f"{RISK_API}/score-risk", json=risk_payload).json()
 
-            # 4. Indexation finale
+            # 4. Indexation finale dans Elasticsearch
             correlated = {
                 "@timestamp": alert["@timestamp"],
                 "src_ip": alert.get("src_ip"), "dest_ip": alert.get("dest_ip"),
@@ -116,13 +117,37 @@ while True:
             }
             
             ES.index(index="correlated-events", document=correlated)
-            print(f"     [SUCCESS] Incident indexé (Risque: {risk_result['risk_level']} | Score: {risk_result['risk_score']})")
+            print(f"    [SUCCESS] Incident indexé (Risque: {risk_result['risk_level']} | Score: {risk_result['risk_score']})")
             
+            # --- 4.bis : PUSH VERS LE CASE MANAGEMENT & NOTIFICATIONS ---
+            # On prépare le payload attendu par ton API Case Management
+            case_payload = {
+                "correlated_event_id": hit["_id"],  # Utilisation de l'ID unique de l'alerte ES comme identifiant
+                "src_ip": alert.get("src_ip", "0.0.0.0"),
+                "dest_ip": alert.get("dest_ip", "0.0.0.0"),
+                "signature": signature,
+                "mitre_tactic": alert.get("mitre", {}).get("tactic", "Unmapped"),
+                "mitre_technique_id": alert.get("mitre", {}).get("technique_id", "T0000"),
+                "mitre_technique_name": alert.get("mitre", {}).get("technique_name", "Unknown Technique"),
+                "risk_score": float(risk_result.get("risk_score", 0.0)),
+                "risk_level": risk_result.get("risk_level", "Low"),
+                "enrichment": {}
+            }
+            
+            try:
+                api_resp = requests.post(CASE_API_URL, json=case_payload, timeout=5)
+                if api_resp.status_code == 200:
+                    print(f"    [+] Transmis à l'API Case Management avec succès !")
+                else:
+                    print(f"    [-] Erreur API Case Management ({api_resp.status_code}): {api_resp.text}")
+            except Exception as api_err:
+                print(f"    [-] Impossible de contacter l'API Case Management : {api_err}")
+            # -------------------------------------------------------------
+
             # 5. On met à jour l'horloge
             last_ts = alert["@timestamp"]
 
     except Exception as e:
         print(f"[-] Erreur boucle : {e}")
-        
         
     time.sleep(10)

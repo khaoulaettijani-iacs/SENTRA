@@ -80,6 +80,7 @@ services:
       - ES_HOST=http://elasticsearch:9200
       - ML_API=http://backend-api:8000
       - RISK_API=http://risk-scoring-engine:8000
+      - CASE_API_URL=http://case-management-api:8000/incidents
     depends_on:
       elasticsearch:
         condition: service_healthy
