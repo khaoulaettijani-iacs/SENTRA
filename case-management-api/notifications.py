@@ -18,7 +18,7 @@ def send_email(incident: dict):
             f"ID incident: {incident['id']}")
     msg = MIMEText(body)
     msg["Subject"] = f"[SENTRA] Incident {incident['risk_level']} détecté"
-    msg["From"], msg["To"] = SMTP_USER, NOTIFY_EMAIL_TO
+    msg["From"], msg["To"] = "alert@sentra.local", NOTIFY_EMAIL_TO
     try:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
             s.starttls(); s.login(SMTP_USER, SMTP_PASS); s.send_message(msg)
