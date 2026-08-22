@@ -1,4 +1,4 @@
-import os, smtplib, requests
+import os, requests
 from email.mime.text import MIMEText
 
 SMTP_HOST = os.environ.get("SMTP_HOST")
@@ -33,22 +33,23 @@ def send_webhook(incident: dict):
     geo = enrichment.get("geo", {}).get("country", "Inconnu")
     abuse = enrichment.get("reputation", {}).get("abuse_confidence_score", "N/A")
     
-    # Construction d'un joli message Discord
     message = (
         f"🚨 **ALERTE {incident['risk_level'].upper()}** (Score: {incident['risk_score']})\n"
         f"**Source :** `{incident['src_ip']}` 🌍 {geo} | 🛡️ AbuseIPDB: {abuse}%\n"
         f"**Cible :** `{incident['dest_ip']}`\n"
         f"**Technique :** {incident['mitre_technique_id']} - {incident['mitre_technique_name']}"
+    )
     payload = {"content": message}
     try:
         r = requests.post(WEBHOOK_URL, json=payload, timeout=5)
         return {"sent": r.status_code < 300}
     except Exception as e:
         return {"sent": False, "reason": str(e)}
-
+"""
 def notify_if_critical(incident: dict):
     # Déclenche l'alerte uniquement pour les risques élevés
     if incident.get("risk_level") in ("Critical", "High"):
         return {"email": send_email(incident), "webhook": send_webhook(incident)}
     return {"email": {"sent": False, "reason": "risque insuffisant"},
             "webhook": {"sent": False, "reason": "risque insuffisant"}}
+"""
