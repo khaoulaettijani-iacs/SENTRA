@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from notifications import notify_if_critical
+from enrichment.enrichment import enrich_ip
 
 app = FastAPI()
 DATABASE_URL = os.environ["DATABASE_URL"]
@@ -41,6 +42,9 @@ class AssignUpdate(BaseModel):
 
 @app.post("/incidents")
 def create_incident(inc: IncidentCreate):
+    # Enrich the incident data
+    inc.enrichment = enrich_ip(inc.src_ip, inc.dest_ip)
+
     conn = get_conn()
     with conn, conn.cursor() as cur:
         cur.execute("""

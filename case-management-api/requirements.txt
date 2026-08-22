@@ -3,3 +3,5 @@ uvicorn[standard]==0.32.0
 psycopg2-binary==2.9.10
 requests==2.31.0
 pydantic==2.6.0
+requests==2.31.0
+geoip2==2.9.0

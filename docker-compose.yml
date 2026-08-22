@@ -127,6 +127,7 @@ services:
       - SMTP_PASS=${SMTP_PASS}
       - NOTIFY_EMAIL_TO=${NOTIFY_EMAIL_TO}
       - WEBHOOK_URL=${WEBHOOK_URL}
+      - ABUSEIPDB_API_KEY=${ABUSEIPDB_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
