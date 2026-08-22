@@ -43,7 +43,7 @@ class AssignUpdate(BaseModel):
 @app.post("/incidents")
 def create_incident(inc: IncidentCreate):
     # Enrich the incident data
-    inc.enrichment = enrich_ip(inc.src_ip, inc.dest_ip)
+    inc.enrichment = enrich_ip(inc.src_ip)
 
     conn = get_conn()
     with conn, conn.cursor() as cur:
