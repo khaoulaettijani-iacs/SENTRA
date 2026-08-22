@@ -7,9 +7,9 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASS = os.environ.get("SMTP_PASS")
 NOTIFY_EMAIL_TO = os.environ.get("NOTIFY_EMAIL_TO")
 WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
-
-def send_email(incident: dict):
-    if not all([SMTP_HOST, SMTP_USER, SMTP_PASS, NOTIFY_EMAIL_TO]):
+"""
+ def send_email(incident: dict):
+  if not all([SMTP_HOST, SMTP_USER, SMTP_PASS, NOTIFY_EMAIL_TO]):
         return {"sent": False, "reason": "SMTP non configuré"}
     body = (f"Incident {incident['risk_level']} (score {incident['risk_score']})\n"
             f"{incident['src_ip']} -> {incident['dest_ip']}\n"
@@ -25,13 +25,21 @@ def send_email(incident: dict):
         return {"sent": True}
     except Exception as e:
         return {"sent": False, "reason": str(e)}
-
+"""
 def send_webhook(incident: dict):
     if not WEBHOOK_URL:
         return {"sent": False, "reason": "webhook non configuré"}
-    payload = {"content": f"🚨 {incident['risk_level']} ({incident['risk_score']}) — "
-                           f"{incident['src_ip']} → {incident['dest_ip']} — "
-                           f"{incident['mitre_technique_id']}"}
+    enrichment = incident.get("enrichment", {})
+    geo = enrichment.get("geo", {}).get("country", "Inconnu")
+    abuse = enrichment.get("reputation", {}).get("abuse_confidence_score", "N/A")
+    
+    # Construction d'un joli message Discord
+    message = (
+        f"🚨 **ALERTE {incident['risk_level'].upper()}** (Score: {incident['risk_score']})\n"
+        f"**Source :** `{incident['src_ip']}` 🌍 {geo} | 🛡️ AbuseIPDB: {abuse}%\n"
+        f"**Cible :** `{incident['dest_ip']}`\n"
+        f"**Technique :** {incident['mitre_technique_id']} - {incident['mitre_technique_name']}"
+    payload = {"content": message}
     try:
         r = requests.post(WEBHOOK_URL, json=payload, timeout=5)
         return {"sent": r.status_code < 300}
