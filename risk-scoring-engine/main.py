@@ -20,7 +20,6 @@ class CorrelatedEvent(BaseModel):
 @app.post("/score-risk")
 def score_risk(ev: CorrelatedEvent):
     # 1. Composante IDS (Max: 35 points)
-    # Suricata : 1 = Haute, 2 = Moyenne, 3 = Basse
     ids_component  = (4 - ev.ids_severity) / 3 * 35          
     
     # 2. Composante MITRE (Max: 15 points)
@@ -30,11 +29,16 @@ def score_risk(ev: CorrelatedEvent):
     rf_component   = ev.rf_proba * 30                        
     
     # 4. Composante Isolation Forest (Max: 20 points)
-    # On inverse le score négatif. S'il est très anormal (ex: -0.8), on limite entre 0 et 1.
     iso_component  = max(0, min(1, -ev.iso_raw_score)) * 20  
 
     # Calcul du score total
     total = round(ids_component + mitre_component + rf_component + iso_component, 1)
+
+    # --- NOUVEAUTÉ SOC : OVERRIDE DÉTERMINISTE ---
+    # Si la signature IDS a une priorité maximale (1), c'est une attaque avérée.
+    # On garantit un score critique, même si le modèle ML manque de contexte réseau.
+    if ev.ids_severity == 1 and total < 85.0:
+        total = 85.0
 
     # Classification par niveaux
     if total >= 80: 
