@@ -9,7 +9,6 @@ Afin de maintenir un équilibre entre la visibilité nécessaire pour la détect
 * Les modules HTTP, DNS et TLS sont activés pour des investigations approfondies.
 
 ## Choix du mode d'export : Filestore vs Syslog Natif
-**L'option "Syslog" native de l'interface pfSense n'est pas utilisée.**
 
-*   **Problème du Syslog natif :** Le démon syslog natif de FreeBSD obéit strictement à la norme RFC5424 qui limite la taille des datagrammes UDP. Les logs EVE de Suricata étant des objets JSON complexes contenant des payloads réseau, ils dépassent régulièrement cette limite, entraînant une troncature silencieuse et des erreurs de parsing JSON côté Logstash.
-*   **Solution retenue (Filestore) :** Suricata est configuré en mode **Filestore**. Les événements sont écrits localement en JSON pur dans `/var/log/suricata/*/eve.json`. C'est le composant `syslog-ng` (via TCP) qui prend ensuite le relais pour expédier ce fichier vers le SOC, garantissant l'intégrité absolue de la donnée.
+* L'option "Syslog" native de l'interface pfSense n'est pas utilisée car le démon syslog natif de FreeBSD obéit strictement à la norme RFC5424 qui limite la taille des datagrammes UDP. Les logs EVE de Suricata étant des objets JSON complexes contenant des payloads réseau, ils dépassent régulièrement cette limite, entraînant une troncature silencieuse et des erreurs de parsing JSON côté Logstash.
+* Solution retenue (Filestore) : Suricata est configuré en mode **Filestore**. Les événements sont écrits localement en JSON pur dans `/var/log/suricata/*/eve.json`. C'est le composant `syslog-ng` (via TCP) qui prend ensuite le relais pour expédier ce fichier vers le SOC, garantissant l'intégrité absolue de la donnée.

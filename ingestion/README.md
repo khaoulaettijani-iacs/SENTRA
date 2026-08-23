@@ -1,95 +1,70 @@
-# SENTRA – Ingestion Layer (ELK + Logstash)
+# SENTRA – Ingestion Layer (ELK, Filebeat & Suricata)
 
-Ce dossier contient la stack d’ingestion du projet SENTRA basée sur Docker Compose :
-- Elasticsearch (stockage)
-- Kibana (visualisation)
-- Logstash (pipeline d’ingestion)
+Ce dossier contient la stack d’ingestion centrale de la plateforme SOC SENTRA basée sur Docker Compose, ainsi que la configuration des flux de collecte :
+- **Elasticsearch** (stockage et indexation)
+- **Kibana** (visualisation et exploration)
+- **Logstash** (pipeline d’ingestion et enrichissement MITRE ATT&CK)
 
 ---
 
-## VM SOC prête
-- Ubuntu SOC configuré (VMnet4 – 192.168.30.10)
-- Accès réseau OK (gateway 192.168.30.1)
-- Docker installé et fonctionnel
+## Sources de Données & Flux
+- **Filebeat** (DMZ, `192.168.20.10`) : Collecte `/var/log/auth.log` et `/var/log/syslog` → Logstash port **5044** (Beats)
+- **Suricata** (pfSense, format EVE JSON) : `/var/log/suricata/*/eve.json` → `syslog-ng` → Logstash port **5000** (TCP, JSON lines)
 
-Vérification :
-```bash
-docker --version
-docker run hello-world
-```
+---
 
-## Configuration kernel (IMPORTANT)
+## Prérequis & Configuration Kernel 
 
-Elasticsearch nécessite une valeur minimale pour vm.max_map_count.
+Elasticsearch nécessite une valeur minimale pour `vm.max_map_count` pour allouer ses index en mémoire.
 
-Configurer sur la VM SOC :
+Configurer sur la machine SOC (Ubuntu, `192.168.30.10`) :
 ```bash
 sudo sysctl -w vm.max_map_count=262144
 ```
-
-Pour rendre permanent :
+Pour rendre ce paramètre permanent :
 ```bash
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
-## Lancement de la stack
-
-Depuis la VM SOC :
+## Démarrage de la Stack
+Depuis la machine SOC :
 ```bash
-# récupérer les derniers fichiers
+# Récupérer les derniers fichiers du dépôt
 git pull
-# lancer les conteneurs
-docker compose up -d
+# Lancer les conteneurs d'ingestion en arrière-plan
+docker compose up -d elasticsearch kibana logstash
 ```
 
-## Services déployés
-Elasticsearch :
+## Ports et Services Déployés
 
-URL: http://localhost:9200
-Rôle : stockage et indexation des logs
+| Service | Port / Protocole | Description / Rôle |
+| :--- | :--- | :--- |
+| Elasticsearch | 9200 / tcp | API REST, stockage et indexation des logs |
+| Kibana | 5601 / tcp | Interface web de visualisation et d'analyse |
+| Logstash | 5044 / tcp | Réception des logs système via Filebeat |
+| Logstash | 5000 / tcp | Réception des alertes réseau via Suricata / syslog-ng |
 
-Kibana :
-URL : http://localhost:5601
-Rôle : visualisation et analyse
+Architecture Docker :
+- Réseau : soc-net (réseau interne Docker pour la communication inter-services).
+- Volumes : esdata (stockage persistant des données Elasticsearch).
 
-Logstash :
-Port Beats : 5044 (Filebeat → Logstash)
-Port UDP : 5000 (Suricata via pfSense)
-
-## Ports utilisés
-```text
-| Service       | Port     | Description     |
-| ------------- | -------- | --------------- |
-| Elasticsearch | 9200     | API REST        |
-| Kibana        | 5601     | Interface web   |
-| Logstash      | 5044     | Entrée Filebeat |
-| Logstash      | 5000/udp | Entrée Suricata |
-```
-
-## Architecture Docker
-Réseau
-soc-net : réseau interne Docker pour communication entre services
-Volume
-esdata : stockage persistant Elasticsearch
-
-## Pipeline Logstash
-```bash
+## Pipeline Logstash de Référence
+```conf
 input {
   beats {
     port => 5044
   }
-  udp {
+  tcp {
     port  => 5000
-    codec => json
+    codec => json_lines
     type  => "suricata"
   }
 }
+
 filter {
-  # Phase 3 :
-  # - Parsing logs
-  # - Enrichissement GeoIP
-  # - Mapping MITRE ATT&CK
+  # Enrichissement MITRE ATT&CK (SID -> Pattern -> Split)
 }
+
 output {
   if [type] == "suricata" {
     elasticsearch {
@@ -102,44 +77,27 @@ output {
       index => "filebeat-%{+YYYY.MM.dd}"
     }
   }
-
-  stdout { codec => rubydebug }  # debug (à désactiver en production)
+  stdout { codec => rubydebug }  # Mode debug (console)
 }
 ```
-## Notes importantes
-xpack.security.enabled=false → pas d’authentification (lab uniquement)
-discovery.type=single-node → mode standalone
-mémoire Java limitée à 512MB (adapter selon RAM)
+## Chaîne de Vérification & Dépannage:
+Pour valider le bon fonctionnement de bout en bout, vérifiez dans cet ordre :
 
-## Vérification
-```bash
-docker ps
-```
-Attendu :
-elasticsearch → healthy
-kibana → running
-logstash → running
+1. Filebeat (DMZ) : sudo filebeat test output (doit renvoyer OK)
+2. Suricata (pfSense) : tail -f /var/log/suricata/*/eve.json (vérifier l'écriture des flux)
+3. Logstash (SOC) : docker logs -f logstash (vérifier la réception des deux flux)
+4. Elasticsearch : curl http://localhost:9200/_cat/indices?v (présence des index filebeat-* et suricata-*)
+5. Kibana : Ouvrir http://192.168.30.10:5601, configurer les Data Views et consulter l'onglet Discover.
 
-Test Elasticsearch :
-```bash
-curl http://localhost:9200
-```
+## Pannes Connues & Choix d'Architecture Résolus
+- Problème 1 : Le Syslog natif de Suricata tronquait les événements JSON longs (limitation de la norme RFC5424 sur FreeBSD).
 
-Accès Kibana :
-ouvrir navigateur → http://192.168.30.10:5601
+* Solution : Utilisation du mode Filestore local couplé à syslog-ng (voir docs/architecture/adr/ADR-003-...).
 
-## Objectif
+- Problème 2 : Risque de perte de datagrammes en UDP 5000 lors de pics d'attaques massifs (scans de ports).
 
-Cette stack permet :
+* Solution : Passage du transport syslog-ng vers le protocole TCP sur le port 5000 (voir docs/architecture/adr/ADR-004-...).
 
-ingestion des logs système (Filebeat)
-ingestion des alertes réseau (Suricata)
-centralisation dans Elasticsearch
-visualisation via Kibana
-
-## tapes suivantes
-Installer Filebeat sur DMZ
-Connecter Filebeat → Logstash
-Configurer Suricata → Logstash (UDP 5000)
-Créer index patterns dans Kibana
-Valider pipeline end-to-end
+## Notes de Laboratoire
+- xpack.security.enabled=false → Pas d'authentification active (contexte de laboratoire de test).
+- discovery.type=single-node → Mode nœud unique Elasticsearch.
