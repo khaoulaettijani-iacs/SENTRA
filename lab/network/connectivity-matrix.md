@@ -1,7 +1,5 @@
 # Matrice de Validation de la Connectivité et Segmentation (Firewall)
 
-Ce document prouve l'efficacité de la segmentation réseau appliquée sur pfSense. Les flux non autorisés sont bloqués "by design" afin de contenir les compromissions.
-
 | Source | Destination | Méthode de Test | Attendu | Résultat Confirmé | Commentaire |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Kali (10.10)** | pfSense OPT1 (10.1) | `ping` | Autorisé |  Pass | Test de la passerelle attaquant |

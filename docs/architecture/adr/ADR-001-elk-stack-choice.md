@@ -1,4 +1,4 @@
-# ADR 008 : Choix de la stack ELK vs Splunk/Graylog pour le SIEM
+# ADR 001 : Choix de la stack ELK vs Splunk/Graylog pour le SIEM
 
 Le projet SENTRA nécessite un moteur de stockage et de recherche capable d'ingérer des logs réseau bruts (Filebeat) et des alertes de sécurité (Suricata EVE JSON) en temps réel, afin de les mettre à disposition du moteur de corrélation Python.
 

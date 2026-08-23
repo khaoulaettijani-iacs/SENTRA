@@ -2,7 +2,14 @@
 
 Ce document décrit la configuration réseau appliquée à la machine Kali Linux dans le lab SENTRA, ainsi que les tests de connectivité réalisés.
 
-# Configuration Réseau : Kali Linux (Attaquant)
+## Rôle dans l’architecture
+
+Kali Linux joue le rôle de Machine attaquante (Attacker Node). Elle est utilisée pour générer du trafic malveillant afin de :
+- tester la détection par Suricata
+- générer des logs (Filebeat → ELK)
+- alimenter le moteur de corrélation SENTRA
+
+## Configuration Réseau : Kali Linux (Attaquant)
 
 **Prérequis :** L'adaptateur réseau VMware doit être fixé sur `VMnet2`.
 
@@ -43,7 +50,6 @@ Interface eth0 correctement assignée avec l’adresse 192.168.10.10/24
 ```bash
 ping -c 3 192.168.10.1
 ```
-
 Résultat :
 Réponses reçues 
 Latence faible (réseau local)
@@ -62,22 +68,5 @@ Les captures suivantes sont disponibles :
 - ping 192.168.10.1 (connectivité locale)
 
  Chemin : lab/network/screenshots/kali-network-test.png
-
-
-La communication entre Kali et pfSense est fonctionnelle.
-L’accès Internet est opérationnel via le NAT (WAN).
-La machine Kali est prête pour les phases d’attaque :
-Scan réseau (Nmap)
-Brute force (Hydra)
-Tests web (Nikto / ZAP)
-
----
-
-## Rôle dans l’architecture
-
-Kali Linux joue le rôle de Machine attaquante (Attacker Node). Elle est utilisée pour générer du trafic malveillant afin de :
-- tester la détection par Suricata
-- générer des logs (Filebeat → ELK)
-- alimenter le moteur de corrélation SENTRA
 
 ---

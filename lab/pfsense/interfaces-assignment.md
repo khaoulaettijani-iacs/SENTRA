@@ -2,9 +2,7 @@
 
 Ce document décrit la correspondance entre les interfaces physiques/virtuelles VMware, les noms dans pfSense, leurs adresses IP et leur rôle dans l’architecture.
 
-## Table de mapping
-
-# Assignation des Interfaces pfSense
+## Table de mapping - Assignation des Interfaces pfSense
 
 | Nom Physique (pfSense) | Nom Logique | Adresse IP statique | Rôle & Zone |
 | :--- | :--- | :--- | :--- |

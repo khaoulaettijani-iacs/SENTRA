@@ -3,6 +3,16 @@
 Ce document décrit la configuration réseau et l’état des services sur le serveur Ubuntu situé dans la DMZ du lab SENTRA.
 
 ---
+##  Rôle dans l’architecture
+
+Le serveur Ubuntu en DMZ joue le rôle de Machine cible (Victim Server)
+
+Fonctions principales :
+
+- hébergement de services (ex: Apache)
+- génération de logs système et sécurité
+- point d’observation pour Suricata (trafic réseau)
+- source de données pour la pipeline SENTRA
 
 ## Configuration réseau
 
@@ -60,21 +70,4 @@ Envoi vers Elasticsearch (SOC)
 sudo systemctl status filebeat
 - Résultat attendu :
 service active (running)
----
-
-- Le serveur DMZ est accessible depuis Kali → environnement prêt pour simulation d’attaques.
-- La segmentation réseau fonctionne correctement via pfSense.
-- Filebeat est opérationnel
-
-##  Rôle dans l’architecture
-
-Le serveur Ubuntu en DMZ joue le rôle de Machine cible (Victim Server)
-
-Fonctions principales :
-
-- hébergement de services (ex: Apache)
-- génération de logs système et sécurité
-- point d’observation pour Suricata (trafic réseau)
-- source de données pour la pipeline SENTRA
-
 ---

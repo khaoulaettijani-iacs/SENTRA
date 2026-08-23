@@ -1,4 +1,4 @@
-# ADR 009 : Zero-Trust et Segmentation Réseau du Laboratoire
+# ADR 002 : Zero-Trust et Segmentation Réseau du Laboratoire
 
 Pour tester la plateforme SOC SENTRA, une machine attaquante (Kali Linux) doit générer du trafic malveillant vers une cible (Ubuntu DMZ). Il est impératif d'isoler l'infrastructure de sécurité (SOC) pour éviter sa compromission pendant les tests.
 

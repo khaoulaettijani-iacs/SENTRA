@@ -1,94 +1,48 @@
-# SOC Platform - Threat Detection Project
+# SENTRA - SOC Platform Prototype 
 
-## Objective
-Build a SOC platform to detect attacks using IDS, ML and ELK Stack.
+Prototype de plateforme SOC combinant détection d'intrusion (Suricata), machine learning (Random Forest / Isolation Forest), corrélation d'alertes, scoring de risque et gestion d'incidents.
 
-## Architecture
-- Attacker: Kali Linux
-- Firewall: pfSense
-- Target: Ubuntu Server (DMZ)
-- SOC: Ubuntu + ELK (Docker)
+## Architecture & Réseaux
+![Architecture](docs/architecture/architecture-diagram.png)
 
-## Networks
-- Attacker: 192.168.10.0/24
-- DMZ: 192.168.20.0/24
-- SOC: 192.168.30.0/24
-- WAN: NAT
+- Attaquant (Kali Linux) : 192.168.10.0/24
+- Cible / DMZ (Ubuntu Server) : 192.168.20.0/24
+- SOC (Ubuntu + Docker) : 192.168.30.0/24
+- Routeur / Pare-feu (pfSense) : Configuration WAN en NAT pour isoler le laboratoire de l'extérieur.
 
-## Stack
-- Elasticsearch
-- Logstash
-- Kibana
-- Docker Compose
 
-## Repository
+
+## Stack Technique
+- Infrastructure Lab : pfSense, Kali Linux, Ubuntu Server, Ubuntu SOC (VMware Workstation).
+- Pipeline d'Ingestion : Filebeat, Suricata (syslog-ng), Logstash.
+- SIEM : Elasticsearch, Kibana.
+- Machine Learning : scikit-learn (Random Forest, Isolation Forest), dataset CICIDS2017.
+- Backend & APIs : FastAPI (correlation-engine, risk-scoring-engine, reporting-engine, case-management-api).
+- Persistance des Données : PostgreSQL.
+
+## Démarrage rapide
+Prérequis : Docker + Docker Compose sur la VM SOC, fichier .env configuré.
+```bash
+git clone <url-du-repo>
+cd SENTRA
+cp .env.example .env   # À compléter avec vos identifiants (SMTP, Webhook)
+./setup.sh
+```
+
+## Structure du Projet
 
 ```text
 SENTRA/
-├── README.md                          # overview, badges, quickstart
-├── LICENSE
 ├── docker-compose.yml                 # ELK + backend + postgres
-├── .env.example
-├── setup.sh                           # script de setup reproductible 
-│
-├── docs/
-│   ├── architecture/
-│   │   ├── architecture-diagram.png       # export du diagramme global
-│   │   ├── network-diagram.png            # export topologie pfSense/VMnets
-│   │   ├── attack-scenario-flow.png        # export scénario d'attaque
-│   │   ├── data-flow-diagram.png
-│   │   └── adr/
-│   │       ├── ADR-001-elk-vs-splunk.md
-│   │       ├── ADR-002-suricata-vs-snort.md
-│   │       ├── ADR-003-rf-plus-isolation-forest.md
-│   │       └── ADR-004-postgresql-persistence.md
-│   ├── risk-scoring-methodology.md
-│   ├── incident-report-template.md
-│   ├── validation-checklist.md
-│   ├── risk-register.md
-│   └── executive-summary.md
-│
-├── lab/
-│   ├── pfsense/                        # config, règles NAT/firewall
-│   ├── network/                        # tableau d'adressage, schémas VMnet
-│   └── vagrant/                        
-│
-├── ingestion/
-│   ├── filebeat/filebeat.yml
-│   ├── logstash/pipelines/
-│   └── suricata/
-│       ├── suricata.yaml
-│       └── rules/custom.rules
-│
-├── ml/
-│   ├── notebooks/01_preprocessing.ipynb
-│   ├── notebooks/02_random_forest.ipynb
-│   ├── notebooks/03_isolation_forest.ipynb
-│   ├── data/README.md                  
-│   ├── models/                         # .pkl versionnés 
-│   └── train.py
-│
-├── correlation-engine/                 # service Python
-├── risk-scoring-engine/                # service Python
-├── backend-api/                        # API interne 
-│
-├── dashboard/                          # frontend léger ou config Kibana
-├── reporting/
-│   └── templates/incident_report.j2
-│
-├── database/
-│   └── postgresql/
-│       ├── schema.sql
-│       └── migrations/
-│
-├── enrichment/                         # GeoIP, AbuseIPDB, VirusTotal/MISP
-├── notifications/                      # email + webhook
-│
-├── evidence-pack/
-│   └── 2026-08-XX_scenario-nmap/       
-│       ├── screenshots/
-│       └── logs/
-│
-├── tests/
-└── scripts/                            # scripts de rejeu des scénarios d'attaque
+├── setup.sh                           # Script d'initialisation
+├── docs/                              # Architecture, ADRs, rapports
+├── lab/                               # Configurations pfSense et réseau
+├── ingestion/                         # Pipelines Logstash et règles Suricata
+├── ml/                                # Notebooks, modèles .pkl et datasets
+├── correlation-engine/                # Service Python d'analyse
+├── risk-scoring-engine/               # Moteur d'évaluation hybride
+├── backend-api/                       # API interne de détection ML
+├── case-management-api/               # Gestion des incidents et notifications
+├── database/                          # Schémas PostgreSQL et migrations
+└── scripts/                           # Scénarios de rejeu d'attaques
 ```

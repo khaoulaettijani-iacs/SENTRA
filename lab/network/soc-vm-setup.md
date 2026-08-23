@@ -3,6 +3,15 @@
 Ce document décrit la configuration réseau et l’installation de Docker sur la machine SOC (SENTRA), responsable de la centralisation et de l’analyse des logs.
 
 ---
+## Rôle dans l’architecture
+
+La machine Ubuntu SOC joue le rôle de Centre d’Analyse (SOC / SIEM - SENTRA)
+
+Fonctions principales :
+- Centralisation des logs (Filebeat → Elasticsearch)
+- Analyse et visualisation (Kibana)
+- Détection d’intrusions (corrélation + ML)
+- Enrichissement via Threat Intelligence
 
 ## Configuration réseau
 
@@ -59,19 +68,4 @@ Message de confirmation affiché
 Docker fonctionne correctement
 
 ---
-
-- La connectivité réseau entre les segments DMZ et SOC est fonctionnelle.
-- Docker est correctement installé → prêt pour déploiement ELK (Elasticsearch, Logstash, Kibana)
-- La machine SOC peut recevoir les logs depuis la DMZ (Filebeat), analyser les événements et héberger les composants SENTRA.
----
-
-## Rôle dans l’architecture
-
-La machine Ubuntu SOC joue le rôle de Centre d’Analyse (SOC / SIEM - SENTRA)
-
-Fonctions principales :
-- Centralisation des logs (Filebeat → Elasticsearch)
-- Analyse et visualisation (Kibana)
-- Détection d’intrusions (corrélation + ML)
-- Enrichissement via Threat Intelligence
 

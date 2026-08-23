@@ -1,12 +1,26 @@
-# Elasticsearch data
+# SECRETS & CREDENTIALS 
+.env
+
+# DOCKER & DATA VOLUMES
 esdata/
 **/esdata/
-
-# Docker volumes 
 volumes/
+pgdata/
 
-# Ignorer les gros datasets CSV mais garder l'architecture des dossiers
+# PYTHON & CACHE
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+#  MACHINE LEARNING (DATA & MODELS)
+
+# Ignorer les gros datasets CSV
 ml/data/raw/*.csv
+ml/data/raw/
+
+# Ignorer tous les modèles par défaut
 ml/models/*.pkl
 ml/models/*.json
 
@@ -14,5 +28,13 @@ ml/models/*.json
 !ml/models/*_v2_lean.pkl
 !ml/models/scaler_v2.pkl
 !ml/models/feature_columns_v2.json
+!ml/models/.gitkeep
 
-venv/
+#  ENRICHISSEMENT & RAPPORTS
+enrichment/data/*.mmdb
+reporting/output/
+
+
+# OS GENERATED FILES
+.DS_Store
+node_modules/
