@@ -1,10 +1,7 @@
-# ADR-004 : Stratégie d'Enrichissement Dynamique MITRE ATT&CK
+# ADR-005 : Stratégie d'Enrichissement Dynamique MITRE ATT&CK
 
+Le SOC SENTRA génère des alertes de sécurité (via Suricata) qui nécessitent une contextualisation immédiate pour faciliter l'analyse et préparer les futures phases de Machine Learning. Il est nécessaire de mapper ces alertes brutes vers le framework MITRE ATT&CK (Tactiques et Techniques)avant l'indexation dans Elasticsearch.
 
-## Contexte
-Le SOC SENTRA génère des alertes de sécurité (via Suricata) qui nécessitent une contextualisation immédiate pour faciliter l'analyse L1 et préparer les futures phases de Machine Learning. Il est nécessaire de mapper ces alertes brutes vers le framework MITRE ATT&CK (Tactiques et Techniques) au vol, avant l'indexation dans Elasticsearch.
-
-## Décision
 Nous avons opté pour une approche à deux niveaux intégrée directement dans le pipeline Logstash via le filtre `translate`, utilisant deux dictionnaires YAML distincts :
 
 1. **Priorité 1 : Mapping exact par SID (`mitre-by-sid.yml`)**

@@ -1,6 +1,6 @@
 # Mapping MITRE ATT&CK - Scénarios de Détection SENTRA
 
-Ce document établit la correspondance formelle entre les attaques simulées dans le laboratoire, les signatures de détection (Suricata ET Open & Custom) et le framework MITRE ATT&CK. Ce mapping permet aux analystes d'identifier rapidement la tactique et la technique employées par une menace.
+Ce document établit la correspondance formelle entre les attaques simulées dans le laboratoire, les signatures de détection (Suricata ET Open & Custom) et le framework MITRE ATT&CK. Ce mapping permet d'identifier rapidement la tactique et la technique employées par une menace.
 
 ## Stratégie de Classification
 
@@ -25,5 +25,3 @@ L'architecture SENTRA utilise une approche hybride pour garantir une couverture 
 | `9000003` (Web Dir Enum) | Reconnaissance | T1595.003 | Active Scanning: Wordlist Scanning |
 | `(?i)nmap` (ET Open) | Reconnaissance | T1595.002 | Active Scanning: Vulnerability Scanning |
 | `(?i)ssh.*(scan|brute)` | Credential Access | T1110.001 | Brute Force: Password Guessing |
-
-Pour modifier ces correspondances ou en ajouter de nouvelles, veuillez éditer les fichiers YAML correspondants. Logstash rechargera automatiquement la configuration toutes les 5 minutes.
