@@ -1,6 +1,6 @@
 # Référentiel de Données ML (Dataset)
 
-> Les fichiers de données bruts (.csv) ne sont pas inclus dans ce dépôt en raison de leur taille (plusieurs Go). Seul un échantillon (`sample/sample_dataset.csv`) est fourni pour tester le pipeline.
+> Les fichiers de données bruts (.csv) ne sont pas inclus dans ce dépôt en raison de leur taille. Seul un échantillon (`sample/sample_dataset.csv`) est fourni pour tester le pipeline.
 
 ## Dataset Utilisé : CICIDS2017
 Pour entraîner les modèles de Machine Learning du projet SENTRA, nous utilisons le dataset académique **CICIDS2017** (Canadian Institute for Cybersecurity), réputé pour sa diversité d'attaques et la fiabilité de ses labels.

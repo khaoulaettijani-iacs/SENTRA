@@ -1,3 +1,5 @@
 Modèle,Précision,Rappel,F1-score,AUC-ROC
-Random Forest (Supervisé),0.956,0.988,0.972,0.998
-Isolation Forest (Non-Supervisé),0.746,0.346,0.473,0.775
+Random Forest v1 (Offline - 20 features),0.956,0.988,0.972,0.998
+Isolation Forest v1 (Offline - 20 features),0.746,0.346,0.473,0.775
+Random Forest v2 Lean (Production - 8 features),0.944,0.987,0.965,0.998
+Isolation Forest v2 Lean (Production - 8 features),0.018,0.002,0.004,0.689

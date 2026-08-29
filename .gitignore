@@ -29,6 +29,7 @@ ml/models/*.json
 !ml/models/scaler_v2.pkl
 !ml/models/feature_columns_v2.json
 !ml/models/.gitkeep
+!ml/data/raw/.gitkeep
 
 #  ENRICHISSEMENT & RAPPORTS
 enrichment/data/*.mmdb
