@@ -1,0 +1,43 @@
+=================================================================
+RAPPORT D'INCIDENT DE SÉCURITÉ — SENTRA
+=================================================================
+Généré le : 2026-09-05T19:06:41.699292+00:00
+Référence  : dcf78a3f
+
+RÉSUMÉ EXÉCUTIF
+-----------------------------------------------------------------
+Le 2026-09-05T16:48:22.159031769Z, une activité classée Low (score 21.6/100)
+a été détectée depuis 192.168.10.10 vers 192.168.20.10.
+L'alerte "SURICATA ICMPv4 unknown code" a été associée à la technique MITRE ATT&CK
+- (Not yet mapped to MITRE ATT&CK), tactique Unmapped.
+
+DÉTAILS TECHNIQUES
+-----------------------------------------------------------------
+Horodatage              : 2026-09-05T16:48:22.159031769Z
+IP source                : 192.168.10.10
+IP destination            : 192.168.20.10
+Signature IDS             : SURICATA ICMPv4 unknown code
+Sévérité IDS (Suricata)   : -
+Tactique MITRE             : Unmapped
+Technique MITRE            : - — Not yet mapped to MITRE ATT&CK
+Probabilité Random Forest : 0.182
+Score Isolation Forest    : 0.212
+Score de risque final     : 21.6/100 (Low)
+
+DÉCOMPOSITION DU SCORE
+-----------------------------------------------------------------
+Composante IDS    : 11.7 / 35
+Composante MITRE  : 4.5 / 15
+Composante RF      : 5.4 / 30
+Composante IF      : 0 / 20
+
+RECOMMANDATIONS
+-----------------------------------------------------------------
+
+- Analyser manuellement la signature pour un mapping MITRE ultérieur
+
+
+-----------------------------------------------------------------
+Rapport généré automatiquement par le moteur de reporting SENTRA.
+Ce document constitue une pièce de l'evidence pack du projet.
+=================================================================
