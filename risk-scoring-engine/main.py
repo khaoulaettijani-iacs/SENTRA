@@ -25,21 +25,11 @@ def score_risk(ev: CorrelatedEvent):
     rf_component   = ev.rf_proba * 30                        
     iso_component  = max(0, min(1, -ev.iso_raw_score)) * 20  
     
+    # 2. Somme réelle sans forçage "démo"
     total = ids_component + mitre_component + rf_component + iso_component
 
-    # --- LA LOGIQUE DE DÉMONSTRATION DU SOC (OVERRIDE) ---
-    
-    # 1. Si c'est juste du Ping/ICMP, on force le score à rester bas (c'est juste du bruit)
-    if "ICMP" in ev.mitre_tactic or ev.mitre_tactic == "Unmapped" and ev.ids_severity == 3:
-        # On réduit l'impact du ML qui panique pour du Ping
-        total = min(total, 25.5) 
-
-    # 2. Si c'est une VRAIE attaque (Sévérité 1 ou 2) avec un Tactic identifié (Reconnaissance, etc.)
-    elif ev.ids_severity <= 2 or ev.mitre_tactic in ["Reconnaissance", "Credential Access"]:
-        # On force un score critique pour que la notification Discord parte !
-        total = max(total, 92.4)
-
-    total = round(total, 1)
+    # On s'assure juste que le total reste logiquement entre 0 et 100
+    total = max(0.0, min(100.0, round(total, 1)))
 
     # Classification stricte
     if total >= 80: 

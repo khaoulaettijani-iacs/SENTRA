@@ -25,13 +25,15 @@ def find_flow(flow_id):
     return hits[0]["_source"] if hits else None
 
 def extract_features(document):
-    """Extrait les 8 features ML, qu'elles viennent d'un log 'flow' ou du snapshot d'une 'alert'"""
+    """Extrait les 8 features ML avec des valeurs de secours réalistes (évite le Train/Serve Skew)"""
     flow = document.get("flow", {})
-    age = max(float(flow.get("age", 1.0)), 1.0)
-    bts = float(flow.get("bytes_toserver", 0))
-    btc = float(flow.get("bytes_toclient", 0))
-    pts = float(flow.get("pkts_toserver", 0))
-    ptc = float(flow.get("pkts_toclient", 0))
+    
+    # Sécurisation des valeurs par défaut pour éviter de tromper le ML avec des zéros absolus
+    age = max(float(flow.get("age", 1.0)), 0.1) # Pas de division par zéro
+    bts = float(flow.get("bytes_toserver", 64.0)) # Au moins 64 octets (1 paquet IP basique)
+    btc = float(flow.get("bytes_toclient", 0.0))
+    pts = float(flow.get("pkts_toserver", 1.0))   # Au moins 1 paquet envoyé
+    ptc = float(flow.get("pkts_toclient", 0.0))
     
     return {
         "flow_duration": age, 
