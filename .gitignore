@@ -1,5 +1,5 @@
 # SECRETS & CREDENTIALS 
-.env
+# .env
 
 # DOCKER & DATA VOLUMES
 esdata/
